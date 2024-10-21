@@ -36,9 +36,14 @@ public class ClientUDP : MonoBehaviour
         //we are going to send a message to establish our communication so we need an endpoint
         //We need the server's IP and the port we've binded it to before
         //Again, initialize the socket
-        IPEndPoint ipep = new IPEndPoint();
 
-        socket = new Socket();
+        //IPEndPoint ipep = new IPEndPoint();
+
+        //socket = new Socket();
+
+        IPEndPoint serverEp = new IPEndPoint(IPAddress.Parse("192.168.206.15"), 9050);
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        socket.Connect(serverEp);
 
         //TO DO 2.1 
         //Send the Handshake to the server's endpoint.
@@ -47,6 +52,8 @@ public class ClientUDP : MonoBehaviour
 
         byte[] data = new byte[1024];
         string handshake = "Hello World";
+        data = Encoding.ASCII.GetBytes(handshake);
+        socket.SendTo(data, serverEp);
   
         //TO DO 5
         //We'll wait for a server response,
@@ -61,13 +68,13 @@ public class ClientUDP : MonoBehaviour
     //since we already know it's the server who's communicating with us
     void Receive()
     {
-        IPEndPoint sender;
-        EndPoint Remote;
+        IPEndPoint sender = new IPEndPoint(IPAddress.Parse("192.168.206.15"), 9050);
+        EndPoint Remote = (EndPoint)(sender);
         byte[] data = new byte[1024];
         int recv = socket.ReceiveFrom(data, ref Remote);
 
-        //clientText = ("Message received from {0}: " + Remote.ToString());
-        //clientText = clientText += "\n" + Encoding.ASCII.GetString(data, 0, recv);
+        clientText = ("Message received from {0}: " + Remote.ToString());
+        clientText = clientText += "\n" + Encoding.ASCII.GetString(data, 0, recv);
 
     }
 

@@ -63,6 +63,10 @@ public class ClientTCP : MonoBehaviour
         //TO DO 4
         //Using the socket that stores the connection between the 2 endpoints, call the TCP send function with
         //an encoded message
+        byte[] data = new byte[1024];
+        clientText = "blabliblu";
+        data = Encoding.ASCII.GetBytes(clientText);
+        server.Send(data);
 
     }
 
@@ -73,7 +77,7 @@ public class ClientTCP : MonoBehaviour
         byte[] data = new byte[1024];
         int recv = 0;
 
-        //clientText = clientText += "\n" + Encoding.ASCII.GetString(data, 0, recv);
+        clientText = clientText += "\n" + Encoding.ASCII.GetString(data, 0, recv);
     }
 
 }

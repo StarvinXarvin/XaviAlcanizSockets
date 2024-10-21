@@ -5,6 +5,7 @@ using System.Threading;
 using TMPro;
 using System.Text;
 using JetBrains.Annotations;
+using UnityEditor.PackageManager;
 
 public class ServerTCP : MonoBehaviour
 {
@@ -73,7 +74,7 @@ public class ServerTCP : MonoBehaviour
             //the socket's RemoteEndpoint and LocalEndPoint
             //try printing them on the console
 
-            newUser.socket = ;//accept the socket
+            newUser.socket = socket.Accept();//accept the socket
 
             //IPEndPoint clientep = (IPEndPoint)socket.RemoteEndPoint;
             //serverText = serverText + "\n"+ "Connected with " + clientep.Address.ToString() + " at port " + clientep.Port.ToString();
@@ -105,7 +106,7 @@ public class ServerTCP : MonoBehaviour
                 break;
             else
             {
-                //serverText = serverText + "\n" + Encoding.ASCII.GetString(data, 0, recv);
+                serverText = serverText + "\n" + Encoding.ASCII.GetString(data, 0, recv);
             }
 
             //TO DO 6
@@ -121,6 +122,9 @@ public class ServerTCP : MonoBehaviour
     //Just call the socket's send function and encode the string.
     void Send(User user)
     {
-
+        byte[] data = new byte[1024];
+        serverText = "ping";
+        data = Encoding.ASCII.GetBytes(serverText);
+        socket.Send(data);
     }
 }

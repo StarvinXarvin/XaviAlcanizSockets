@@ -29,8 +29,12 @@ public class ServerUDP : MonoBehaviour
         //We want any UDP connection that wants to communicate with 9050 port to send it to our socket.
         //So as with TCP, we create a socket and bind it to the 9050 port. 
 
-        IPEndPoint ipep = new IPEndPoint();
-        socket = new Socket();
+        IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9050);
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        socket.Bind(ipep);
+
+        //IPEndPoint ipep = new IPEndPoint();
+        //socket = new Socket();
 
         //TO DO 3
         //Our client is sending a handshake, the server has to be able to recieve it
@@ -48,7 +52,7 @@ public class ServerUDP : MonoBehaviour
  
     void Receive()
     {
-        int recv;
+        int recv = 0;
         byte[] data = new byte[1024];
         
         serverText = serverText + "\n" + "Waiting for new Client...";
@@ -58,6 +62,7 @@ public class ServerUDP : MonoBehaviour
         //endpoint with any address and an IpEndpoint from it to reply to it later.
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         EndPoint Remote = (EndPoint)(sender);
+        socket.ReceiveFrom(data, ref Remote);
 
         //Loop the whole process, and start receiveing messages directed to our socket
         //(the one we binded to a port before)
@@ -67,8 +72,8 @@ public class ServerUDP : MonoBehaviour
         while (true)
         {
 
-            //serverText = serverText + "\n" + "Message received from {0}:" + Remote.ToString();
-            //serverText = serverText + "\n" + Encoding.ASCII.GetString(data, 0, recv);
+            serverText = serverText + "\n" + "Message received from {0}:" + Remote.ToString();
+            serverText = serverText + "\n" + Encoding.ASCII.GetString(data, 0, recv);
 
             //TO DO 4
             //When our UDP server receives a message from a random remote, it has to send a ping,
@@ -83,7 +88,8 @@ public class ServerUDP : MonoBehaviour
         //Use socket.SendTo to send a ping using the remote we stored earlier.
         byte[] data = new byte[1024];
         string welcome = "Ping";
-
+        data = Encoding.ASCII.GetBytes(welcome);
+        socket.SendTo(data, Remote);
     }
 
    
